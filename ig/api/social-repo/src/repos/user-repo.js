@@ -10,11 +10,40 @@ async function find() {
 }
 
 async function findById(id) {
-  const { rows } = await pool.query(`
-    SELECT * FROM users WHERE id = ${id}
-    `);
+  const { rows } = await pool.query(
+    `
+    SELECT * FROM users WHERE id = $1
+    `,
+    [id]
+  );
 
   return toCamelCase(rows)[0];
 }
 
-module.exports = { find, findById };
+async function insert(username, bio) {
+  const { rows } = await pool.query(
+    `INSERT INTO users (username, bio) VALUES ($1, $2) RETURNING *`,
+    [username, bio]
+  );
+
+  return toCamelCase(rows)[0];
+}
+
+async function update(id, username, bio) {
+  const { rows } = await pool.query(
+    `UPDATE users SET username = $1, bio = $2 WHERE id = $3 RETURNING *`,
+    [username, bio, id]
+  );
+
+  return toCamelCase(rows)[0];
+}
+
+async function deleteById (id) {
+  const { rows } = pool.query(
+    `DELETE FROM users WHERE id = $1 RETURNING *`, [id]
+  );
+
+  return toCamelCase(rows)[0];
+}
+
+module.exports = { find, findById, insert, update, deleteById };
