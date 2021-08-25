@@ -28,10 +28,10 @@ router.post("/users", async (req, res) => {
   const user = await UserRepo.insert(username, bio);
 
   if (user) {
-    res.send(user);
+    return res.send(user);
   }
 
-  res.sendStatus(404);
+  return res.sendStatus(404);
 
 });
 

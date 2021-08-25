@@ -38,12 +38,19 @@ async function update(id, username, bio) {
   return toCamelCase(rows)[0];
 }
 
-async function deleteById (id) {
-  const { rows } = pool.query(
-    `DELETE FROM users WHERE id = $1 RETURNING *`, [id]
+async function deleteById(id) {
+  const { rows } = await pool.query(
+    `DELETE FROM users WHERE id = $1 RETURNING *`,
+    [id]
   );
 
   return toCamelCase(rows)[0];
 }
 
-module.exports = { find, findById, insert, update, deleteById };
+async function count() {
+  const { rows } = await pool.query(`SELECT COUNT(*) FROM users;`);
+
+  return Number(rows[0].count);
+}
+
+module.exports = { find, findById, insert, update, deleteById, count };
